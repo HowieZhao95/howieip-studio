@@ -1,7 +1,7 @@
 #!/bin/bash
 # howieip-studio 一行安装：
-#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/HowieZhao95/mdldm-maitian/feat/howieip-studio-discord/scripts/install.sh)"
-# 做的事：检查 git 和 Node（≥22.5）→ 把 HowieZhao95/mdldm-maitian 下载到 ~/howieip-studio/ → 运行安装向导
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/HowieZhao95/howieip-studio/feat/howieip-studio-discord/scripts/install.sh)"
+# 做的事：检查 git 和 Node（≥22.5）→ 把 HowieZhao95/howieip-studio 下载到 ~/howieip-studio/ → 运行安装向导
 # 换目录：HOWIEIP_STUDIO_HOME=~/somewhere bash -c "$(curl -fsSL …)"
 set -e
 DIR=${HOWIEIP_STUDIO_HOME:-$HOME/howieip-studio}
@@ -13,7 +13,7 @@ if ! command -v node >/dev/null; then echo "需要 Node.js 22.5 以上：brew in
 node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>22||(a===22&&b>=5)?0:1)' || { echo "Node.js 版本是 $(node -v)，需要 22.5 以上"; exit 1; }
 
 mkdir -p "$DIR"; cd "$DIR"
-for R in mdldm-maitian; do
+for R in howieip-studio; do
   if [ -d "$R/.git" ]; then say "更新 $R"; git -C "$R" pull --ff-only -q; else say "下载 $R"; for i in 1 2 3; do git clone --depth 1 "https://github.com/HowieZhao95/$R.git" && break; echo "下载失败，第 $i 次重试"; rm -rf "$R"; sleep 3; done; [ -d "$R/.git" ] || { echo "$R 下载失败，检查网络后重跑这条命令"; exit 1; }; fi
 done
 
@@ -23,9 +23,9 @@ echo "从 Chrome 应用商店装，安装向导最后会在 howieip-studio 的�
 say "发布 skill"
 L="$HOME/.claude/skills/howieip-studio-publish"
 if [ -e "$L" ] || [ -L "$L" ]; then echo "~/.claude/skills/howieip-studio-publish 已经存在，没动它"
-elif [ -d "$HOME/.claude/skills" ]; then ln -s "$DIR/mdldm-maitian/skills/howieip-studio-publish" "$L"; echo "已链接到 ~/.claude/skills/howieip-studio-publish（Claude Code 里说「整理发布」就会用上）"
-else echo "没找到 ~/.claude/skills；用 Claude Code 的话，把 $DIR/mdldm-maitian/skills/howieip-studio-publish 放进 ~/.claude/skills/"; fi
+elif [ -d "$HOME/.claude/skills" ]; then ln -s "$DIR/howieip-studio/skills/howieip-studio-publish" "$L"; echo "已链接到 ~/.claude/skills/howieip-studio-publish（Claude Code 里说「整理发布」就会用上）"
+else echo "没找到 ~/.claude/skills；用 Claude Code 的话，把 $DIR/howieip-studio/skills/howieip-studio-publish 放进 ~/.claude/skills/"; fi
 
 say "安装向导"
-[ -t 0 ] || { echo "安装向导需要在终端里交互：cd $DIR/mdldm-maitian && node src/init.mjs"; exit 0; }
-cd "$DIR/mdldm-maitian" && node src/init.mjs
+[ -t 0 ] || { echo "安装向导需要在终端里交互：cd $DIR/howieip-studio && node src/init.mjs"; exit 0; }
+cd "$DIR/howieip-studio" && node src/init.mjs

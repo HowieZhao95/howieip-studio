@@ -1,11 +1,10 @@
 ﻿# howieip-studio · Windows 一键安装
-#   powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/HowieZhao95/mdldm-maitian/feat/howieip-studio-discord/scripts/install-windows.ps1 | iex"
-# 做的事（与 scripts/install.sh 逐步对应）：检查 git 和 Node（≥22.5，缺了用 winget 装）→
-#   把上游仓库 mdldm-maitian 克隆到 %USERPROFILE%\howieip-studio\ → 拷双击启动器 → 接上发布 skill → 运行安装向导
+#   powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/HowieZhao95/howieip-studio/feat/howieip-studio-discord/scripts/install-windows.ps1 | iex"
+# 做的事：检查 git 和 Node（≥22.5）→ 把 HowieZhao95/howieip-studio 克隆到 %USERPROFILE%\howieip-studio\ → 拷双击启动器 → 接上发布 skill → 运行安装向导
 # 换目录：先设环境变量 HOWIEIP_STUDIO_HOME，如 $env:HOWIEIP_STUDIO_HOME = 'D:\howieip-studio' 再运行
 $ErrorActionPreference = 'Stop'
 $Base = if ($env:HOWIEIP_STUDIO_HOME) { $env:HOWIEIP_STUDIO_HOME } else { Join-Path $HOME 'howieip-studio' }
-$Hub  = Join-Path $Base 'mdldm-maitian'
+$Hub  = Join-Path $Base 'howieip-studio'
 
 function Say($t) { Write-Host "`n== $t" -ForegroundColor Green }
 function Ok($t)  { Write-Host "  OK $t" }
@@ -46,7 +45,7 @@ if (-not $nodeOk) {
 
 # ---------- 3. 克隆/更新两个仓库 ----------
 Say '下载 howieip-studio 本体与发布助手'
-foreach ($r in @('mdldm-maitian')) {
+foreach ($r in @('howieip-studio')) {
   $dest = Join-Path $Base $r
   if (Test-Path (Join-Path $dest '.git')) { Tip "更新 $r"; git -C $dest pull --ff-only -q }
   else {

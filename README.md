@@ -51,7 +51,7 @@
 ## 一行装好
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/HowieZhao95/mdldm-maitian/feat/howieip-studio-discord/scripts/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/HowieZhao95/howieip-studio/feat/howieip-studio-discord/scripts/install.sh)"
 ```
 
 下载 howieip-studio 和发布助手到 `~/howieip-studio/`、接上发布 skill、打开安装向导；向导问完几个问题，生成配置、装好开机自启、打开各平台登录页。需要 macOS、Node.js ≥ 22.5、Google Chrome。
@@ -59,7 +59,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/HowieZhao95/mdldm-maitia
 Windows（社区贡献，感谢 [ajin558](https://github.com/ajin558)；开机自启暂未适配）：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/HowieZhao95/mdldm-maitian/feat/howieip-studio-discord/scripts/install-windows.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/HowieZhao95/howieip-studio/feat/howieip-studio-discord/scripts/install-windows.ps1 | iex"
 ```
 
 同样下载到 `%USERPROFILE%\howieip-studio\`、接上发布 skill、打开安装向导，安装目录里另有 4 个双击启动器（演示 / 登录 / 体检 / 启动）。需要 Windows 10/11、Node.js ≥ 22.5、Google Chrome；缺 Git / Node 时脚本会用 winget 自动补装。开机自启暂未适配（向导里的 launchd 步骤会自动跳过），可用任务计划程序指向安装目录的 `4-start.bat` 代替。
@@ -74,7 +74,7 @@ powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.c
 需要：macOS、Node.js ≥ 22.5（用到内置 `node:sqlite`）、Google Chrome；可选 NAS（放成片）、飞书群机器人、cloudflared。
 
 ```bash
-git clone https://github.com/HowieZhao95/mdldm-maitian.git && cd mdldm-maitian
+git clone https://github.com/HowieZhao95/howieip-studio.git && cd howieip-studio
 node src/demo.mjs                       # 先用假数据看看效果：http://localhost:8788/?key=demo
 node src/init.mjs                       # 安装向导：检查环境、生成 config.json、装开机自启；在egolite 里从应用商店添加 howieip-studio 发布助手、登录各平台
 node src/hub.mjs doctor                 # 登录完检查各平台登录态和上传页（不上传、不填写）
