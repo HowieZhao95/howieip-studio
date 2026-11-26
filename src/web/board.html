@@ -219,6 +219,7 @@ function render() {
     <div class="nav"><a class="on" href="/">大屏</a><a href="/p#/formats">格式</a><a href="/p#/traffic">流量</a><a href="/p#/calendar">日历</a><a href="/p#/convert">转化</a><a href="/p#/archive">档案</a><a href="/p#/system">系统</a><a href="/p#/prefs">偏好</a></div>
     <div class="lights"><span class="light ok">守护进程 运行中</span><span class="light ${h.nas ? 'ok' : 'bad'}">NAS ${h.nas ? '已挂载' : '读不到'}</span><span class="light ${h.chrome ? 'ok' : 'bad'}">egolite ${h.chrome ? '在线' : '没开'}</span>
       <span class="light ${lamp.cls}">平台登录 ${lamp.text}</span></div>
+    <button type="button" class="btn pri refresh-btn" ${(O.actions || []).some(a => !a.done) ? 'disabled' : ''} data-act='{"type":"metrics"}' title="立刻采一遍各平台流量和粉丝">${(O.actions || []).some(a => !a.done) ? '更新中…' : '更新数据'}</button>
     <button type="button" class="theme-btn" title="切换明暗" aria-label="切换明暗"></button>
     <div class="clock" id="clock"></div></div>
 
@@ -260,13 +261,32 @@ async function load() {
   try { const r = await fetch('/api/overview'); if (!r.ok) throw new Error(r.status); O = await r.json(); applyAppIcon('/icon?t=' + Date.now(), true); render(); }
   catch (e) { if (!O) $('#screen').innerHTML = `<div class="empty">连不上 howieip-studio 服务（${esc(e.message)}）</div>`; else console.error(e); }
 }
-document.addEventListener('click', (e) => {
-  const b = e.target.closest && e.target.closest('.theme-btn'); if (!b) return;
-  const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-  document.documentElement.dataset.theme = next;
-  localStorage.setItem('howieip-theme', next);
-  const meta = document.querySelector('meta[name=theme-color]');
-  if (meta) meta.content = next === 'light' ? '#f4f4f6' : '#07080d';
+function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.append(d); setTimeout(() => d.remove(), 2600); }
+let actTimer = null;
+function pollActions() {
+  clearInterval(actTimer);
+  actTimer = setInterval(async () => {
+    await load();
+    if (!(O && (O.actions || []).some(a => !a.done))) { clearInterval(actTimer); actTimer = null; }
+  }, 4000);
+}
+document.addEventListener('click', async (e) => {
+  const theme = e.target.closest && e.target.closest('.theme-btn');
+  if (theme) {
+    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('howieip-theme', next);
+    const meta = document.querySelector('meta[name=theme-color]');
+    if (meta) meta.content = next === 'light' ? '#f4f4f6' : '#07080d';
+    return;
+  }
+  const b = e.target.closest && e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  let a; try { a = JSON.parse(b.dataset.act); } catch { return; }
+  b.disabled = true; b.textContent = '更新中…';
+  const r = await fetch('/api/action', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(a) });
+  const j = await r.json().catch(() => ({}));
+  toast(r.ok ? '已开始更新，跑完会自动刷新' : (j.error || '没成功'));
+  if (r.ok) { await load(); pollActions(); } else { b.disabled = false; b.textContent = '更新数据'; }
 });
 const tip = $('#tip');
 document.addEventListener('mousemove', (e) => { const t = e.target.closest && e.target.closest('[data-tip]'); if (!t) { tip.style.display = 'none'; return; } tip.textContent = t.dataset.tip; tip.style.display = 'block'; const w = tip.offsetWidth; tip.style.left = Math.min(innerWidth - w - 8, e.clientX + 14) + 'px'; tip.style.top = Math.max(8, e.clientY - 34) + 'px'; });
@@ -285,7 +305,7 @@ if (matchMedia('(hover:hover)').matches) {
     el.style.setProperty('--ry', ((x - .5) * k).toFixed(2) + 'deg'); el.style.setProperty('--rx', ((.5 - y) * k).toFixed(2) + 'deg');
   });
 }
-load(); setInterval(tick, 1000); setInterval(() => { if (!document.hidden) load(); }, 60000);
+load(); setInterval(tick, 1000); setInterval(() => { if (!document.hidden && !actTimer) load(); }, 60000);
 </script>
 </body>
 </html>

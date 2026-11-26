@@ -35,8 +35,10 @@ function toast(t) { const d = document.createElement('div'); d.className = 'toas
 function topbar(O, on) {
   const h = O.health, lamp = loginLamp(h), n = new Date();
   const nav = [['/', '大屏', 'board'], ['/p#/formats', '格式', 'formats'], ['/p#/traffic', '流量', 'traffic'], ['/p#/calendar', '日历', 'calendar'], ['/p#/convert', '转化', 'convert'], ['/p#/archive', '档案', 'archive'], ['/p#/system', '系统', 'system'], ['/p#/prefs', '偏好', 'prefs']];
+  const actBusy = (O.actions || []).some(a => !a.done);
   return `<div class="top"><a class="logo" href="/">Howie.IP-Studio</a><div class="tag">内容与粉丝监控</div><div class="nav">${nav.map(([u, t, k]) => `<a class="${k === on ? 'on' : ''}" href="${u}">${t}</a>`).join('')}</div>
     <div class="lights"><span class="light ok">守护进程 运行中</span><span class="light ${h.nas ? 'ok' : 'bad'}">NAS ${h.nas ? '已挂载' : '读不到'}</span><span class="light ${h.chrome ? 'ok' : 'bad'}">egolite ${h.chrome ? '在线' : '没开'}</span><span class="light ${lamp.cls}">平台登录 ${lamp.text}</span></div>
+    <button type="button" class="btn pri refresh-btn" ${actBusy ? 'disabled' : ''} data-act='{"type":"metrics"}' title="立刻采一遍各平台流量和粉丝">${actBusy ? '更新中…' : '更新数据'}</button>
     <button type="button" class="theme-btn" title="切换明暗" aria-label="切换明暗"></button>
     <div class="clock"><small>${n.getMonth() + 1}/${n.getDate()} 周${'日一二三四五六'[n.getDay()]}</small>${pad(n.getHours())}:${pad(n.getMinutes())}</div></div>`;
 }

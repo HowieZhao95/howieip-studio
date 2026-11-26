@@ -213,7 +213,7 @@ async function handle(req, res) {
       if (!argv || argv.some(x => x === undefined || x === null || x === '')) return send(res, 400, { error: '不支持的操作' });
       if (a.type === 'mark' && (a.state !== 'published' || !getEpisode(a.id) || !NAMES[a.platform])) return send(res, 400, { error: '状态不对' });
       if (actions.some(x => !x.done && x.type !== 'mark') && a.type !== 'mark') return send(res, 409, { error: '上一个操作还在跑，等它结束' });
-      const rec = { type: a.type, label: { sync: '取链接', metrics: '采流量', doctor: '体检', board: '同步知识站数据', followers: '采粉丝', mark: '标记状态', retry: '重跑平台' }[a.type] + (a.platform ? ` · ${NAMES[a.platform] || a.platform}` : ''), startedAt: new Date().toISOString(), done: false, ok: null, tail: '' };
+      const rec = { type: a.type, label: { sync: '取链接', metrics: a.id ? '更新这一期流量' : '更新数据', doctor: '体检', board: '同步知识站数据', followers: '采粉丝', mark: '标记状态', retry: '重跑平台' }[a.type] + (a.platform ? ` · ${NAMES[a.platform] || a.platform}` : ''), startedAt: new Date().toISOString(), done: false, ok: null, tail: '' };
       actions.push(rec);
       const ch = spawn(process.execPath, [path.join(DIR, 'hub.mjs'), ...argv], { cwd: ROOT, env: { ...process.env, HUB_NO_WEB: '1' } });
       const on = (d) => { rec.tail = (rec.tail + d).slice(-600); }; ch.stdout.on('data', on); ch.stderr.on('data', on);

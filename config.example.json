@@ -17,7 +17,7 @@
   "auto": ["zsz", "x", "youtube", "instagram"],
   "manual": ["bilibili", "douyin", "xhs", "channels", "mp", "discord"],
 
-  "keepAlive": ["channels", "mp"],
+  "keepAlive": ["channels", "mp", "youtube", "x", "instagram"],
   "keepAliveMinutes": 60,
   "sampleHours": 6,
 

@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/macOS-only-1c1a16?logo=apple" alt="macOS" />
   <img src="https://img.shields.io/badge/Node.js-%E2%89%A5%2022.5-5FA04E?logo=nodedotjs&logoColor=white" alt="Node 22.5+" />
   <a href="https://chromewebstore.google.com/detail/eaaipbilkhibicihiollecmbpneikpnj"><img src="https://img.shields.io/badge/Chrome-howieip-studio 发布助手-F2B21B?logo=googlechrome&logoColor=white" alt="howieip-studio 发布助手" /></a>
-  <a href="https://github.com/CzzzzzzJ/mdldm-maitian/stargazers"><img src="https://img.shields.io/github/stars/CzzzzzzJ/mdldm-maitian?style=social" alt="Stars" /></a>
+  <a href="https://github.com/HowieZhao95/howieip-studio/stargazers"><img src="https://img.shields.io/github/stars/HowieZhao95/howieip-studio?style=social" alt="Stars" /></a>
 </p>
 
 <p align="center">
@@ -226,15 +226,15 @@ iPhone 桌面 / 锁屏常驻显示全平台粉丝、今日涨粉、最新一期�
 
 > 微信群码 7 天有效（这张 11 月 25 日前可扫），我会定期换；扫不进去就提个 Issue 喊我一声。
 
-觉得有用就点个 ⭐ Star，这是我继续改下去的动力；遇到问题直接提 [Issue](https://github.com/CzzzzzzJ/mdldm-maitian/issues)。
+觉得有用就点个 ⭐ Star，这是我继续改下去的动力；遇到问题直接提 [Issue](https://github.com/HowieZhao95/howieip-studio/issues)。
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=czzzzzzj%2Fmdldm-maitian&type=date&releases=&legend=top-left">
+<a href="https://www.star-history.com/?repos=HowieZhao95%2Fhowieip-studio&type=date&releases=&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=czzzzzzj/mdldm-maitian&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=czzzzzzj/mdldm-maitian&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=czzzzzzj/mdldm-maitian&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=HowieZhao95/howieip-studio&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=HowieZhao95/howieip-studio&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=HowieZhao95/howieip-studio&type=date&legend=top-left" />
  </picture>
 </a>
 
