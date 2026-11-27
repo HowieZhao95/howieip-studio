@@ -28,6 +28,20 @@ const short = (n) => n.split(/[｜|]/)[0].trim();
 const nickOf = (name, pj) => (pj && pj.nick) || (short(name).split(/[，,？?！!：:。]/)[0].trim() || short(name)).slice(0, 16);
 const latest = db.prepare('SELECT * FROM metrics WHERE episode_id=? AND platform=? ORDER BY day DESC LIMIT 1');
 const actions = [];   // 最近的操作（内存里）
+// 轮播/图文没有单独封面文件：第一张图就是封面，大屏 3D 和缩略图走这里
+const coverKeys = (pj) => {
+  const keys = Object.keys((pj && pj.covers) || {});
+  if (keys.length) return keys;
+  return Array.isArray(pj && pj.images) && pj.images[0] ? ['3x4'] : [];
+};
+const coverRel = (pj, k) => {
+  const covers = (pj && pj.covers) || {};
+  if (k && covers[k]) return covers[k];
+  const first = Object.values(covers)[0];
+  if (first) return first;
+  const imgs = Array.isArray(pj && pj.images) ? pj.images : [];
+  return imgs[0] || null;
+};
 
 function episodeView(ep, full = false) {
   const snap = getSnapshot(ep.id), pj = (snap && JSON.parse(snap.project)) || readPj(ep.dir) || { platforms: {} };
@@ -41,7 +55,7 @@ function episodeView(ep, full = false) {
       ...(full ? { copy: { title: p.title || p.shortTitle || '', body: p.desc || p.body || p.text || p.description || '', tags: p.tags || p.topics || [], covers: p.covers || [] }, shot: fs.existsSync(path.join(ep.dir, '发布档案', `${t.platform}.jpg`)) } : {}) };
   });
   const out = { id: ep.id, episode: ep.episode, name: ep.name, short: short(ep.name), nick: nickOf(ep.name, pj), schedule: ep.schedule, createdAt: ep.created_at, dir: ep.dir,
-    campaign: (JSON.stringify(pj.platforms).match(/utm_campaign=([\w-]+)/) || [])[1] || '', covers: Object.keys(pj.covers || {}), durationSec: pj.durationSec || 0, tasks, views, inter };
+    campaign: (JSON.stringify(pj.platforms).match(/utm_campaign=([\w-]+)/) || [])[1] || '', covers: coverKeys(pj), durationSec: pj.durationSec || 0, tasks, views, inter };
   if (full) {
     out.logs = recentLogs(ep.id, 200);
     out.metrics = db.prepare('SELECT day, platform, views, likes, comments, favorites, shares FROM metrics WHERE episode_id=? ORDER BY day').all(ep.id);
@@ -142,7 +156,7 @@ async function handle(req, res) {
     if (!W.widgetToken || !tokenEq(u.searchParams.get('t'), W.widgetToken)) return send(res, 401, '');
     let f = null;
     if (u.searchParams.get('k') === 'avatar') f = W.avatar && path.resolve(ROOT, W.avatar);
-    else { const ep = latestPublished(); const pj = ep && (readPj(ep.dir) || {}); const rel = pj && ((pj.covers || {})[u.searchParams.get('k') || '4x3'] || Object.values(pj.covers || {})[0]); f = rel && path.join(ep.dir, rel); }
+    else { const ep = latestPublished(); const pj = ep && (readPj(ep.dir) || {}); const rel = pj && coverRel(pj, u.searchParams.get('k') || '4x3'); f = rel && path.join(ep.dir, rel); }
     if (!f || !fs.existsSync(f)) return send(res, 404, '');
     const t = thumb(f, Math.min(800, +u.searchParams.get('w') || 400));
     return send(res, 200, fs.readFileSync(t || f), t ? 'image/jpeg' : 'image/png', { 'cache-control': 'max-age=1800' });
@@ -198,7 +212,7 @@ async function handle(req, res) {
     const ep = getEpisode(u.searchParams.get('id')); if (!ep) return send(res, 404, '');
     let f;
     if (u.pathname === '/shot') f = path.join(ep.dir, '发布档案', `${(u.searchParams.get('p') || '').replace(/\W/g, '')}.jpg`);
-    else { const pj = readPj(ep.dir) || {}; const rel = (pj.covers || {})[u.searchParams.get('k') || '4x3'] || Object.values(pj.covers || {})[0]; f = rel && path.join(ep.dir, rel); }
+    else { const pj = readPj(ep.dir) || {}; const rel = coverRel(pj, u.searchParams.get('k') || '4x3'); f = rel && path.join(ep.dir, rel); }
     if (!f || !f.startsWith(ep.dir) || !fs.existsSync(f)) return send(res, 404, '');
     // 远程打开时原图（每张 ~700KB）太慢：默认给缩略图（长边 ≤ w，默认 720，JPEG），缓存在 data/thumbs；?full=1 给原图
     if (!u.searchParams.get('full') && !/\.svg$/.test(f)) { const t = thumb(f, Math.min(1600, +u.searchParams.get('w') || 720)); if (t) return send(res, 200, fs.readFileSync(t), 'image/jpeg', { 'cache-control': 'max-age=3600' }); }
